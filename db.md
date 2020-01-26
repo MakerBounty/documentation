@@ -14,6 +14,15 @@ CREATE TABLE users (
 );
 ```
 
+## Auth tokens
+```sql
+CREATE TABLE authTokens (
+    authToken VARCHAR(64) PRIMARY KEY,
+    userId BIGINT UNSIGNED REFERENCES users,
+    authTokenExpiration DATETIME NOT NULL
+);
+```
+
 ## Bounties
 Posted bounty, start of thread
 ```sql
