@@ -7,7 +7,7 @@ everyone is a user
 CREATE TABLE users (
     userId BIGINT UNSIGNED PRIMARY KEY,
     email VARCHAR(128) UNIQUE NOT NULL,
-    username VARCHAR(64) UNIQUE NOT NULL,
+    username VARCHAR(45) UNIQUE NOT NULL,
     hashedPassword CHAR(128) NOT NULL,
     bio TEXT,                                   -- profile summary (md)
     createdTs BIGINT UNSIGNED NOT NULL,
