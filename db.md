@@ -1,6 +1,5 @@
 # Database Documentation
 
-
 ## Users
 everyone is a user
 ```sql
@@ -17,7 +16,7 @@ CREATE TABLE users (
 ## Bounties
 Posted bounty, start of thread
 ```sql
-CREATE TABLE bountyThread (
+CREATE TABLE bountyThreads (
     bountyThreadId BIGINT UNSIGNED PRIMARY KEY,
     title VARCHAR(256) NOT NULL,                -- task name
     tags JSON DEFAULT '[]',                     -- relevant skills involved
@@ -28,26 +27,14 @@ CREATE TABLE bountyThread (
 );
 ```
 
-## Solutions
-```sql
-CREATE TABLE bountySolutions (
-    solutionId BIGINT UNSIGNED NOT NULL,
-    bountyThreadId BIGINT UNSIGNED REFERENCES bountyThread,
-    authorUserId BIGINT UNSIGNED REFERENCES users,
-    body TEXT NOT NULL,
-    review ENUM("accepted", "rejected"), -- OP review
-    ts BIGINT UNSIGNED NOT NULL
-);
-```
-
-## Solution comments
-for example, questions
+## Threads Items
 ```sql
 CREATE TABLE bountyComments (
-    commentId BIGINT UNSIGNED NOT NULL,
-    bountyThreadId BIGINT UNSIGNED REFERENCES bountyThread,
+    bountyCommentId BIGINT UNSIGNED NOT NULL,
+    bountyThreadId BIGINT UNSIGNED REFERENCES bountyThreads,
     authorUserId BIGINT UNSIGNED REFERENCES users,
     body TEXT NOT NULL,
+    review ENUM("comment", "pending-solution", "accepted", "rejected"), -- OP review
     ts BIGINT UNSIGNED NOT NULL
 );
 ```
@@ -58,17 +45,18 @@ CREATE TABLE bountyComments (
 Rating for a bounty
 ```sql
 CREATE TABLE bountyVotes (
-    bountyThreadId BIGINT UNSIGNED NOT NULL REFERENCES bountyThread,
+    bountyThreadId BIGINT UNSIGNED NOT NULL REFERENCES bountyThreads,
     userId BIGINT UNSGINED NOT NULL REFERENCS users,
     direction TINYINT(2) NOT NULL,
     ts BIGINT UNSIGNED NOT NULL -- maybe logging in future
 );
 ```
+
 ### Solution Votes
 Rating for a solution
 ```sql
-CREATE TABLE solutionVotes (
-    solutionId BIGINT UNSGINED NOT NULL REFERENCES bountySolutions,
+CREATE TABLE commentVotes (
+    bountyCommentId BIGINT UNSGINED NOT NULL REFERENCES bountySolutions,
     userId BIGINT UNSIGNED NOT NULL REFERENCES users,
     direction TINYINT(2) NOT NULL,
     ts BIGINT UNSIGNED NOT NULL -- maybe logging in future
@@ -80,7 +68,7 @@ CREATE TABLE solutionVotes (
 I want people to be able to see if someone else started on it without making them think they should try something else
 ```sql
 CREATE TABLE bountyWatch (
-    bountyThreadId BIGINT UNSIGNED NOT NULL REFERENCES BountyThread,
+    bountyThreadId BIGINT UNSIGNED NOT NULL REFERENCES bountyThreads,
     userId BIGINT UNSIGNED NOT NULL REFERENCES users,
     ts BIGINT UNSIGNED NOT NULL
 );
@@ -90,14 +78,18 @@ CREATE TABLE bountyWatch (
 ```sql
 CREATE TABLE bountyTransactions (
     transactionId BIGINT UNSIGNED PRIMARY KEY,
+    bountyThreadId BIGINT UNSIGNED NOT NULL REFERENCES bountyThreads,
     userId BIGINT UNSIGNED REFERENCES users,
-    value DECIMAL(12,2) NOT NULL,
-    direction ENUM("add", "take") NOT NULL
+    value DECIMAL(12,2) NOT NULL, -- +:add to bounty  -: take reward
 );
 ```
 
 
 ## User Moderation
-
+- not important rn
 
 ## Notifications
+- deal with it later
+
+## Reccomendations
+- todo: learn data science
