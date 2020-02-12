@@ -6,13 +6,12 @@ everyone is a user
 CREATE TABLE users (
     userId BIGINT UNSIGNED PRIMARY KEY,
     email VARCHAR(128) UNIQUE NOT NULL,
-    username VARCHAR(45) UNIQUE NOT NULL,
+    username VARCHAR(64) UNIQUE NOT NULL,
     hashedPassword CHAR(128) NOT NULL,
     bio TEXT,                                   -- profile summary (md)
     createdTs BIGINT UNSIGNED NOT NULL,
 );
 ```
-
 ## Auth tokens
 ```sql
 CREATE TABLE authTokens (
@@ -29,9 +28,9 @@ CREATE TABLE bountyThreads (
     bountyThreadId BIGINT UNSIGNED PRIMARY KEY,
     title VARCHAR(256) NOT NULL,                -- task name
     tags JSON DEFAULT '[]',                     -- relevant skills involved
-    specBody MEDIUM TEXT NOT NULL,              -- markdown body
+    specBody MEDIUMTEXT NOT NULL,              -- markdown body
+    opUserId BIGINT UNSIGNED REFERENCES users,
     views BIGINT UNSIGNED DEFAULT 0 NOT NULL,
-    score BIGINT DEFAULT 0 NOT NULL,            -- votes
     ts BIGINT UNSIGNED NOT NULL                      -- when was it posted
 );
 ```
@@ -39,7 +38,7 @@ CREATE TABLE bountyThreads (
 ## Threads Items
 ```sql
 CREATE TABLE bountyComments (
-    bountyCommentId BIGINT UNSIGNED NOT NULL,
+    bountyCommentId BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     bountyThreadId BIGINT UNSIGNED REFERENCES bountyThreads,
     authorUserId BIGINT UNSIGNED REFERENCES users,
     body TEXT NOT NULL,
@@ -55,7 +54,7 @@ Rating for a bounty
 ```sql
 CREATE TABLE bountyVotes (
     bountyThreadId BIGINT UNSIGNED NOT NULL REFERENCES bountyThreads,
-    userId BIGINT UNSGINED NOT NULL REFERENCS users,
+    userId BIGINT UNSIGNED NOT NULL REFERENCES users,
     direction TINYINT(2) NOT NULL,
     ts BIGINT UNSIGNED NOT NULL -- maybe logging in future
 );
@@ -65,7 +64,7 @@ CREATE TABLE bountyVotes (
 Rating for a solution
 ```sql
 CREATE TABLE commentVotes (
-    bountyCommentId BIGINT UNSGINED NOT NULL REFERENCES bountySolutions,
+    bountyCommentId BIGINT UNSIGNED NOT NULL REFERENCES bountyComments,
     userId BIGINT UNSIGNED NOT NULL REFERENCES users,
     direction TINYINT(2) NOT NULL,
     ts BIGINT UNSIGNED NOT NULL -- maybe logging in future
