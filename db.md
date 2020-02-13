@@ -88,7 +88,9 @@ CREATE TABLE bountyTransactions (
     transactionId BIGINT UNSIGNED PRIMARY KEY,
     bountyThreadId BIGINT UNSIGNED NOT NULL REFERENCES bountyThreads,
     userId BIGINT UNSIGNED REFERENCES users,
-    value DECIMAL(12,2) NOT NULL, -- +:add to bounty  -: take reward
+    bounty DECIMAL(12,2) NOT NULL, -- +:add to bounty  -: take reward
+    cashed BOOL DEFAULT 0,
+    UNIQUE(userId, bountyThreadId) -- prevents double compensation
 );
 ```
 
